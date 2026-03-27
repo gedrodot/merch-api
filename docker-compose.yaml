@@ -1,0 +1,28 @@
+services:
+  postgres_db:
+    image: postgres:16-alpine 
+    container_name: merch
+    env_file:
+      - .env
+    ports:
+      - "5433:5432" 
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data 
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d myapp_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+  
+  app:
+    build: .
+    container_name: go_app
+    ports:
+      - "8080:8080"
+    env_file: 
+      - .env
+    depends_on:
+      postgres_db:
+        condition: service_healthy

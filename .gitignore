@@ -1,0 +1,8 @@
+.env
+pgdata/
+/bin/
+*.exe
+*.app
+.idea/
+.vscode/
+test.http
